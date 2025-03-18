@@ -1,58 +1,155 @@
-# NLP exploration - Sentiment analysis on disaster prediction tweets
+# NLP Exploration - Disaster Tweet Classification
 
 This project focuses on classifying tweets to determine whether they are announcing a real disaster or not. It employs various machine learning techniques, from traditional methods like Bag-of-Words and TF-IDF to advanced deep learning models such as RNNs (GRU and LSTM) and Transformers (RoBERTa and DistilBERT).
 
-## Overview
+## Project Overview
 
-The project is structured as follows:
+This repository demonstrates a systematic approach to text classification, implementing and comparing multiple techniques:
 
-1. **Data Loading and Preprocessing**: Loads the dataset, performs basic cleaning, and applies advanced text preprocessing using spaCy for tokenization, lemmatization, and removal of stop words, URLs, emails, and short words.
-2. **Traditional Machine Learning Models**: Implements Bag-of-Words and TF-IDF feature extraction techniques, coupled with Logistic Regression and XGBoost classifiers.
-3. **Recurrent Neural Networks (RNNs)**: Explores the use of GRU and LSTM networks, both with and without an attention mechanism. It leverages pre-trained GloVe embeddings to enhance the model's understanding of word semantics.
-4. **Transformers**: Utilizes state-of-the-art Transformer models, specifically RoBERTa and DistilBERT, for fine-tuning and classification.
-5. **Evaluation and Comparison**: Evaluates each model's performance using metrics such as accuracy, loss, and training time. Plots training and validation curves to compare the learning process of different models.
-6. **Inference**: Uses the best-performing model (DistilBERT) to classify the test dataset and generates a CSV file with predictions.
+1. **Traditional Machine Learning**
+   - Bag-of-Words (BoW) with Logistic Regression and XGBoost
+   - TF-IDF with Logistic Regression and XGBoost
+
+2. **Recurrent Neural Networks**
+   - GRU with and without attention mechanisms
+   - LSTM with and without attention mechanisms
+   - Pre-trained GloVe word embeddings integration
+
+3. **Transformer Models**
+   - RoBERTa fine-tuning
+   - DistilBERT fine-tuning
+
+Each approach is evaluated on multiple metrics including accuracy, precision, recall, F1-score, and ROC-AUC to provide a thorough performance comparison.
+
+## Data Processing Pipeline
+
+The data processing pipeline involves several key steps:
+
+1. **Initial Data Analysis**
+   - Examining dataset structure and distribution
+   - Identifying and handling missing values
+
+2. **Text Preprocessing**
+   - Tokenization using spaCy
+   - Lemmatization to reduce words to their base forms
+   - Removal of punctuation, whitespace, stop words, URLs, and emails
+   - Filtering out non-alphabetic tokens and short words
+
+3. **Feature Engineering**
+   - Creating length-based features for the preprocessed text
+
+## Model Implementation Details
+
+### Traditional ML Models
+- **Feature Extraction**: Implementation of both BoW and TF-IDF vectorization
+- **Classifiers**: Logistic Regression and XGBoost with consistent evaluation metrics
+- **Performance Analysis**: Comparison of model performance with both raw and preprocessed text
+
+### RNN Models
+- **Architecture**: Bi-directional GRU and LSTM networks with 2 layers
+- **Word Embeddings**: Initialized with pre-trained GloVe vectors (100d)
+- **Attention Mechanism**: Custom implementation of attention layers for both GRU and LSTM
+- **Training Process**: Includes proper sequence padding, packing, and unpacking for efficient training
+- **Optimization**: Adam optimizer with weight decay for regularization
+
+### Transformer Models
+- **Architecture**: Fine-tuning of pre-trained RoBERTa and DistilBERT models
+- **Training Approach**: Custom dataset and dataloader implementation for transformers
+- **Optimization**: AdamW optimizer with linear scheduler and warmup steps
+- **Token Management**: Proper handling of special tokens, attention masks, and sequence length
+
+## Results and Analysis
+
+### Performance Metrics
+
+The project evaluates all models using consistent metrics:
+- Accuracy, Precision, Recall, F1-Score, and ROC-AUC
+
+### Traditional ML Model Results
+
+| Model | Accuracy | Precision | Recall | F1-Score | ROC-AUC |
+|-------|----------|-----------|--------|----------|---------|
+| BOW - LR - Untreated | 0.682248 | 0.656848 | 0.545232 | 0.595858 | 0.665342 |
+| BOW - LR - Treated | 0.694532 | 0.723485 | 0.467564 | 0.568030 | 0.666501 |
+| BOW - XGBoost - Treated | 0.701893 | 0.725632 | 0.492044 | 0.586433 | 0.675976 |
+| TF-IDF - LR - Untreated | 0.676656 | 0.641061 | 0.561812 | 0.598826 | 0.662473 |
+| TF-IDF - LR - Treated | 0.690326 | 0.704301 | 0.481028 | 0.571636 | 0.664477 |
+| TF-IDF - XGBoost - Treated | 0.686646 | 0.727835 | 0.432069 | 0.542243 | 0.655205 |
+
+### RNN Model Results
+
+| Model | Best F1-Score | Best ROC-AUC |
+|-------|--------------|-------------|
+| GRU | 0.779800 | 0.872743 |
+| GRU with Attention | 0.764045 | 0.870303 |
+| LSTM | 0.772144 | 0.868771 |
+| LSTM with Attention | 0.772327 | 0.869276 |
+
+### Transformer Model Results
+
+| Model | Best F1-Score | Best ROC-AUC |
+|-------|--------------|-------------|
+| RoBERTa | 0.810934 | 0.887643 |
+| DistilBERT | 0.803951 | 0.896761 |
+
+### Key Findings
+
+1. **Text Preprocessing Impact**:
+   - Significant improvement in performance across all traditional models after text preprocessing
+   - Reduction in vocabulary size while maintaining semantic meaning
+
+2. **Model Comparison**:
+   - Transformer models outperform both traditional ML and RNN approaches
+   - Attention mechanisms consistently improve RNN performance
+   - **DistilBERT** achieves the best balance of performance and efficiency
+
+3. **Training Dynamics**:
+   - Learning curves showing convergence patterns for each model
+   - Analysis of training and validation loss/F1-score progression
 
 ## Dependencies
 
--   Python 3.x
--   PyTorch 2.0.1+cu118
--   torchvision 0.15.2+cu118
--   torchtext 0.15.2
--   NumPy
--   Pandas
--   Matplotlib
--   Scikit-learn
--   XGBoost
--   spaCy
--   Transformers
--   tqdm
+```
+torch==2.0.1+cu118
+torchvision==0.15.2+cu118
+torchtext==0.15.2
+numpy<2
+pandas
+matplotlib
+scikit-learn
+xgboost
+spacy
+transformers
+tqdm
+```
 
 ## Usage
 
-1. **Clone the Repository**:
-    ```bash
-    git clone https://github.com/your-username/disaster-tweet-classification.git
-    cd disaster-tweet-classification
-    ```
-2. **Place the Data:**
-    Place `train.csv` and `test.csv` in the root directory of the project.
-3. **Run the Notebook**:
-    -   Open the Jupyter Notebook file (`Disaster_Tweet_Classification.ipynb`) using Jupyter or Google Colab.
-    -   Execute the cells in order to perform data preprocessing, model training, evaluation, and inference.
+1. **Environment Setup**:
+   ```bash
+   # Install PyTorch with CUDA support
+   pip install torch==2.0.1+cu118 torchvision==0.15.2+cu118 torchtext==0.15.2 -f https://download.pytorch.org/whl/torch_stable.html
+   
+   # Install other dependencies
+   pip install "numpy<2" pandas matplotlib scikit-learn xgboost spacy transformers tqdm
+   
+   # Download spaCy language model
+   python -m spacy download en_core_web_sm
+   ```
 
-## Results
+2. **Data Preparation**:
+   - Place `train.csv` and `test.csv` in the project root directory
+   - The training data should include 'text' and 'target' columns
 
-The project compares the performance of various models. The DistilBERT model achieved the highest accuracy on the validation set (83.76%) and was subsequently used to generate predictions for the test set.
+3. **Running the Models**:
+   - Execute the notebook cells sequentially to reproduce the results
+   - Model checkpoints will be saved as `best_model_[model_type].pt`
 
-## Key Findings
+## Future Improvements
 
--   Advanced text preprocessing significantly improves the performance of traditional machine learning models.=
--   Transformer models, particularly DistilBERT, provide superior performance compared to both traditional and RNN-based approaches.
-
-## Further Improvements
-
--   Experiment with different hyperparameters, architectures, and pre-trained models.
--   Incorporate more sophisticated data augmentation techniques.
--   Explore ensemble methods to combine the strengths of different models.
--   Perform error analysis to identify common misclassifications and refine the models accordingly.
+- Experiment with ensemble methods combining traditional ML and deep learning approaches
+- Implement cross-validation for more robust performance evaluation
+- Explore additional transformer architectures (BERT, T5, etc.)
+- Investigate domain adaptation techniques for specific disaster types
+- Implement explainability methods to understand model predictions
+- Optimize hyperparameters using systematic approaches like Bayesian optimization
